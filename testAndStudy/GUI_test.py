@@ -267,91 +267,303 @@
 
 import tkinter as tk
 import tkinter.ttk as ttk
+import tkinter.font
+from turtle import width
+from types import ClassMethodDescriptorType
+from typing_extensions import IntVar
 
 # メインウィンドウの設定
 root = tk.Tk()
 root.title("taskManagement")
 root.geometry("600x600")
 root.resizable(False, False)
+root.configure(bg="white")
 
-# 機能名エリア--------------------------------------------------------------------
-functionNameArea = tk.Frame(root, padx = 15, pady = 15, bd =1, relief=tk.RAISED)
+# 選択されたタスク数
+selectedAmountOfTask = tk.IntVar()
 
-buttonArea = tk.Frame(functionNameArea)
-functionName1 = tk.Button(buttonArea, text = "ホーム", width = 10, relief = tk.FLAT, pady = 15)
-functionName2 = tk.Button(buttonArea, text = "タスク", width = 10, relief = tk.FLAT, pady = 15)
-functionName3 = tk.Button(buttonArea, text = "割り当て", width = 10, relief = tk.FLAT, pady = 15)
-functionName4 = tk.Button(buttonArea, text = "周期", width = 10, relief = tk.FLAT, pady = 15)
-functionName5 = tk.Button(buttonArea, text = "連携", width = 10, relief = tk.FLAT, pady = 15)
+# タスクタブ管理クラス
+class taskClass:
+        # タスク名ラベル管理配列
+        taskName = []
+        # タスク名入力管理配列
+        inputTask = []
+        # 前回選択した値（初期値=0）
+        previous = 0
+        # タスク名ラベル設置エリア
+        taskNameArea = None
+        # タスク名入力設置エリア
+        taskInputArea = None
+        # タスク名ラベル共通フォント設定
+        taskFont = tkinter.font.Font(
+                taskNameArea,
+                family="Bahnschrift",
+                size=15,
+                weight='bold'
+        )                
 
-# ウィジェットを配置→要素を配置
-functionNameArea.pack(side = tk.LEFT, fill = tk.Y)
-buttonArea.pack(side = tk.LEFT)
-# --------------------------------------------------------------------------------
+        # タスク更新
+        def updateTask(self):
+                counter = int(selectedAmountOfTask.get())
 
-# タイトルエリア-----------------------------------------------------------------
-titleArea = tk.Frame(root, padx = 10, pady = 10, bd = 1, relief=tk.RAISED)
-title = tk.Label(titleArea, text = "title")
+                # 初期表示　タスク名、入力エリアの配置
+                if taskClass.previous == 0:
+                        taskClass.taskNameArea = tk.Frame(root)
+                        taskClass.taskNameArea.configure(bg="white")                                               
+                        taskClass.taskNameArea.pack(side=tk.LEFT, fill = "both", expand =True)
 
-titleArea.pack(side = tk.TOP, fill = tk.X)
-# --------------------------------------------------------------------------------
+                        taskClass.taskInputArea = tk.Frame(root)
+                        taskClass.taskInputArea.configure(bg="white")
+                        taskClass.taskInputArea.pack(side=tk.LEFT, fill = "both", expand =True)
+                        
+                for i1 in range(taskClass.previous):
+                        taskClass.taskName[i1].pack_forget()                        
+                        taskClass.inputTask[i1].pack_forget()
 
-# 期間表示エリア-----------------------------------------------------------------
-viewArea = tk.Frame(root, padx = 5, pady = 15, width = 5)
-viewArea.pack(side = tk.TOP, anchor = tk.W, fill = tk.X)
+                taskClass.taskName =[]
+                taskClass.inputTask = []
 
-startArea = tk.Frame(viewArea, padx = 0, pady = 15)
-start1 = tk.Label(startArea, text = "from", padx = 10)
-start2 = tk.Label(startArea, text = "2022/09/22", font = ("normal", 13, "bold"))
-startArea.pack(side = tk.LEFT, fill="both", expand=True)
+                for i2 in range(counter):
+                        taskClass.taskName.append(tk.Label(taskClass.taskNameArea, text="task"+str(i2+1), padx=25, font = taskClass.taskFont))
+                        taskClass.inputTask.append(ttk.Entry(taskClass.taskInputArea, font=taskClass.taskFont))
 
-endArea = tk.Frame(viewArea, padx = 0, pady = 15)
-end1 = tk.Label(endArea, text = "to", padx = 10)
-end2 = tk.Label(endArea, text = "2022/10/10", font = ("normal", 13, "bold"))
-endArea.pack(side = tk.LEFT, fill="both", expand=True)
-# --------------------------------------------------------------------------------
+                        taskClass.taskName[i2].pack(side = tk.TOP, anchor = tk.E, expand = True)
+                        taskClass.taskName[i2].configure(bg="white")
 
-# ホーム　メイン機能----------------------------------------------------------
-homeArea = tk.Frame(root, padx = 0, pady =5)
-homeArea.pack(side = tk.TOP, fill = tk.X)
+                        taskClass.inputTask[i2].pack(side = tk.TOP, anchor = tk.W, expand = 1)
 
-tipsArea1 = tk.Frame(homeArea, padx = 0, pady =15)
-homeTips1 = tk.Label(tipsArea1, text = "task", padx = 10)
-tipsArea1.pack(side = tk.LEFT, fill="both", expand=True)
+                taskClass.previous = counter
 
-tipsArea2 = tk.Frame(homeArea, padx = 0, pady =15)
-homeTips2 = tk.Label(tipsArea2, text = "allocation", padx = 10)
-tipsArea2.pack(side = tk.LEFT, fill="both", expand=True)
+# ホーム画面描画
+def drawHome():
+        # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # フレーム作成↓↓↓
+        # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # 機能名エリア--------------------------------------------------------------------
+        functionNameArea = tk.Frame(root, padx = 15, pady = 15, bd =1, relief=tk.RAISED)
+        functionNameArea.configure(bg="white")
 
-# タスク名と割り当て
-taskNameArea = tk.Frame(root, pady = 10)
-taskNameArea.pack(side = tk.TOP, fill = tk.X)
+        buttonArea = tk.Frame(functionNameArea)
+        normalFont = tkinter.font.Font(
+                buttonArea,
+                family="Bahnschrift",
+                size=10
+        )
+        underlineFont = tkinter.font.Font(
+                buttonArea,
+                family="Bahnschrift", 
+                size = 12, 
+                weight = 'bold', 
+                underline = True
+        )
+        buttonArea.configure(bg="white")
+        functionName1 = tk.Button(buttonArea, font = underlineFont, text = "Home", width = 10, relief = tk.FLAT, pady = 15)
+        functionName1.configure(bg="white")
+        functionName2 = tk.Button(buttonArea, font = normalFont, text = "Task", width = 10, relief = tk.FLAT, pady = 15)
+        functionName2.configure(bg="white")
+        functionName3 = tk.Button(buttonArea, font = normalFont, text = "Allocation", width = 10, relief = tk.FLAT, pady = 15)
+        functionName3.configure(bg="white")
+        functionName4 = tk.Button(buttonArea, font = normalFont, text = "Cycle", width = 10, relief = tk.FLAT, pady = 15)
+        functionName4.configure(bg="white")
+        functionName5 = tk.Button(buttonArea, font = normalFont, text = "Linkage", width = 10, relief = tk.FLAT, pady = 15)
+        functionName5.configure(bg="white")
 
-taskName = tk.Label(taskNameArea)
-# ----------------------------------------------------------------------------------
+        # ウィジェットを配置→要素を配置
+        functionNameArea.pack(side = tk.LEFT, fill = tk.Y)
+        buttonArea.pack(side = tk.LEFT)
+        # --------------------------------------------------------------------------------
 
-# 機能名-------------------------------
-functionName1.pack(side = tk.TOP, anchor = tk.N, pady = 10)
-functionName2.pack(side = tk.TOP, anchor = tk.N, pady = 10)
-functionName3.pack(side = tk.TOP, anchor = tk.N, pady = 10)
-functionName4.pack(side = tk.TOP, anchor = tk.N, pady = 10)
-functionName5.pack(side = tk.TOP, anchor = tk.N, pady = 10)
-# --------------------------------------
+        # タイトルエリア-----------------------------------------------------------------
+        titleArea = tk.Frame(root, padx = 10, pady = 10, bd = 1, relief=tk.RAISED)
+        title = tk.Label(titleArea, text = "title")
 
-# タイトル-------------------------
-title.pack(fill="both", expand=True)
-# -----------------------------------
+        titleArea.pack(side = tk.TOP, fill = tk.X)
+        # --------------------------------------------------------------------------------
 
-# 設定された期間------------------
-start1.pack()
-start2.pack()
-end1.pack()
-end2.pack()
-# -----------------------------------
+        # 期間表示エリア-----------------------------------------------------------------
+        viewArea = tk.Frame(root, padx = 0, pady = 15, width = 5)
+        viewArea.configure(bg="white")
+        viewArea.pack(side = tk.TOP, anchor = tk.W, fill = tk.X)
 
-# 説明---------------------
-homeTips1.pack()
-homeTips2.pack()
-# --------------------------
+        startArea = tk.Frame(viewArea, padx = 0, pady = 15,width = 5)
+        startArea.configure(bg="white")
+        start1 = tk.Label(startArea, text = "from", padx = 10)
+        start1.configure(bg="white")
+        start2 = tk.Label(startArea, text = "2022/09/22", font = ("normal", 13, "bold"), padx=10)
+        start2.configure(bg="white")
+        startArea.pack(side = tk.LEFT, fill="both", expand=True)
+
+        endArea = tk.Frame(viewArea, padx = 0, pady = 15,width = 5)
+        endArea.configure(bg="white")
+        end1 = tk.Label(endArea, text = "to", padx = 10)
+        end1.configure(bg="white")
+        end2 = tk.Label(endArea, text = "2022/10/10", font = ("normal", 13, "bold"))
+        end2.configure(bg="white")
+        endArea.pack(side = tk.LEFT, fill="both", expand=True)
+        # --------------------------------------------------------------------------------
+
+        # ホーム----------------------------------------------------------
+        homeArea = tk.Frame(root, padx = 0, pady = 15, width = 5)
+        homeArea.configure(bg="white")
+        homeArea.pack(side = tk.TOP, anchor = tk.W, fill="both")
+
+        # ラベル
+        tipsArea1 = tk.Frame(homeArea, padx = 0, pady =15,width = 5)
+        tipsArea1.configure(bg="white")
+        homeTips1 = tk.Label(tipsArea1, text = "task", padx = 15)
+        homeTips1.configure(bg="white")
+        tipsArea1.pack(side = tk.LEFT, fill="both", expand=True)
+
+        tipsArea2 = tk.Frame(homeArea, padx = 0, pady =15,width = 5)
+        tipsArea2.configure(bg="white")
+        homeTips2 = tk.Label(tipsArea2, text = "allocation", padx=0)
+        homeTips2.configure(bg="white")
+        tipsArea2.pack(side = tk.LEFT, fill="both", expand=True)
+
+        # タスク名と割り当て
+        taskNameArea = tk.Frame(root, pady = 10)
+        taskNameArea.configure(bg="white")
+        taskName_home = tk.Label(taskNameArea, text = "タスク名", padx=10)
+        taskName_home.configure(bg="white")
+        taskNameArea.pack(side = tk.LEFT, fill="both", expand=True)
+
+        allocationNameArea = tk.Frame(root, pady=10)
+        allocationNameArea.configure(bg="white")
+        allocationName_home = tk.Label(allocationNameArea, text="割り当て", padx=10)
+        allocationName_home.configure(bg="white")
+        allocationNameArea.pack(side = tk.LEFT, fill="both", expand=True)
+
+        taskName = tk.Label(taskNameArea)
+        # ----------------------------------------------------------------------------------
+
+
+        # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # 描画↓↓↓
+        # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # 機能名（機能名エリア）-------------------------------
+        functionName1.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        functionName2.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        functionName3.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        functionName4.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        functionName5.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        # --------------------------------------
+
+        # タイトル（タイトルエリア）-------------------------
+        title.pack(fill="both", expand=True)
+        # -----------------------------------
+
+        # 設定された期間（期間表示エリア）------------------
+        start1.pack()
+        start2.pack()
+        end1.pack()
+        end2.pack()
+        # -----------------------------------
+
+        # 説明（ホーム）---------------------
+        homeTips1.pack()
+        homeTips2.pack()
+        # --------------------------------------
+
+        # タスク名------------------------------
+        taskName_home.pack()
+        allocationName_home.pack()
+        # ----------------------------------------
+
+def drawTask():
+        # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # フレーム作成↓↓↓
+        # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # 機能名エリア--------------------------------------------------------------------
+        functionNameArea = tk.Frame(root, padx = 15, pady = 15, bd =1, relief=tk.RAISED)
+        functionNameArea.configure(bg="white")
+
+        buttonArea = tk.Frame(functionNameArea)
+        normalFont = tkinter.font.Font(
+                buttonArea,
+                family="Bahnschrift",
+                size=10
+        )
+        underlineFont = tkinter.font.Font(
+                buttonArea,
+                family="Bahnschrift", 
+                size = 12, 
+                weight = 'bold', 
+                underline = True
+        )
+        buttonArea.configure(bg="white")
+        functionName1 = tk.Button(buttonArea, font = normalFont, text = "Home", width = 10, relief = tk.FLAT, pady = 15)
+        functionName1.configure(bg="white")
+        functionName2 = tk.Button(buttonArea, font = underlineFont, text = "Task", width = 10, relief = tk.FLAT, pady = 15)
+        functionName2.configure(bg="white")
+        functionName3 = tk.Button(buttonArea, font = normalFont, text = "Allocation", width = 10, relief = tk.FLAT, pady = 15)
+        functionName3.configure(bg="white")
+        functionName4 = tk.Button(buttonArea, font = normalFont, text = "Cycle", width = 10, relief = tk.FLAT, pady = 15)
+        functionName4.configure(bg="white")
+        functionName5 = tk.Button(buttonArea, font = normalFont, text = "Linkage", width = 10, relief = tk.FLAT, pady = 15)
+        functionName5.configure(bg="white")
+
+        # ウィジェットを配置→要素を配置
+        functionNameArea.pack(side = tk.LEFT, fill = tk.Y)
+        buttonArea.pack(side = tk.LEFT)
+        # --------------------------------------------------------------------------------
+
+        # タイトルエリア-----------------------------------------------------------------
+        titleArea = tk.Frame(root, padx = 10, pady = 10, bd = 1, relief=tk.RAISED)
+        title = tk.Label(titleArea, text = "title")
+
+        titleArea.pack(side = tk.TOP, fill = tk.X)
+        # --------------------------------------------------------------------------------
+
+        # タスク数決定エリア-----------------------------------------------------------------
+        task = taskClass()
+
+        amountOfTask = ("1", "2", "3", "4", "5", "6", "7")
+        amountOfTaskArea = tk.Frame(root, padx=20, pady=40)
+        amountOfTaskArea.configure(bg="white")
+        TextForAmountOfTask = tk.Label(amountOfTaskArea, text="total amount of task    :", font=normalFont)
+        TextForAmountOfTask.configure(bg="white")
+        dropdownForAmountOfTask = ttk.Combobox(amountOfTaskArea, state="readonly", values=amountOfTask, textvariable=selectedAmountOfTask)
+        dropdownForAmountOfTask.current(selectedAmountOfTask.get())
+        reflectionButton = tk.Button(amountOfTaskArea, text="button", command=task.updateTask)
+        confirmButton = tk.Button(root, text="confirm")        
+
+        amountOfTaskArea.pack(side = tk.TOP, fill = tk.X)
+        # ---------------------------------------------------------------------------------------
+
+        # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # 描画↓↓↓
+        # ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # 機能名（機能名エリア）-------------------------------
+        functionName1.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        functionName2.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        functionName3.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        functionName4.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        functionName5.pack(side = tk.TOP, anchor = tk.N, pady = 10)
+        # --------------------------------------
+
+        # タイトル（タイトルエリア）-------------------------
+        title.pack(fill="both", expand=True)
+        # -----------------------------------
+
+        # タスク数（タスク数決定エリア）-----------------------
+        TextForAmountOfTask.pack(side = tk.LEFT, fill="both", expand=True)
+        dropdownForAmountOfTask.pack(side = tk.LEFT, fill="both", expand=True, padx=10)
+        # ------------------------------------------------------------
+        
+        # 反映ボタン-----------------------
+        reflectionButton.pack()
+        # -----------------------------------
+
+        # 確定ボタン-----------------------------------------------------------------------
+        confirmButton.pack(side='bottom', anchor=tk.E, padx=20, pady=10)
+        # -----------------------------------------------------------------------------------
+
+        # 初期画面描画
+        task.updateTask()
+
+
+
+# drawHome()
+drawTask()
 
 root.mainloop()

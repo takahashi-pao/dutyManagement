@@ -2,6 +2,9 @@ import datetime
 from datetime import date
 import numpy
 
+# -----------------------------------------------------
+# 調査
+# -----------------------------------------------------
 print(date(2022, 9, 2).isocalendar())
 
 # 関数はdef文で行う
@@ -37,11 +40,24 @@ def howWeekNow(year, month, day):
     
     print(str(year)+"年"+str(month)+"月"+str(day)+"日は"+str(howYear)+"年"+str(week)+"週目の"+str(weekDay)+"曜日です")
 
-# 関数の実行は変数に格納する必要がある
-exe1 = howWeekNow(2023, 1, 1)
+exe1 = howWeekNow(2022, 1, 1)
+
+
+# --------------------------------------------------
+# 本ロジック
+# --------------------------------------------------
+
+# 設定数値の入力
+startYear = int(input("開始年"))
+startMonth = int(input("開始月"))
+startDay = int(input("開始日"))
+
+comparisonYear = int(input("比較年"))
+comparisonMonth = int(input("比較月"))
+comparisonDay = int(input("比較日"))
 
 # 開始日データ
-def startDay(year, month, day):
+def startDate(year, month, day):
     howWeek = date(year, month, day).isocalendar()
     week = int(howWeek.week)
     decreaseValue = week-1
@@ -53,7 +69,7 @@ def startDay(year, month, day):
     return startYear, startWeek, decreaseValue
 
 # 比較日データ
-def comparisonDay(year, month, day):
+def comparisonDate(year, month, day):
     howWeek = date(year, month, day).isocalendar()
     comparisonYear = howWeek.year
     comparisonWeek = howWeek.week
@@ -63,9 +79,9 @@ def comparisonDay(year, month, day):
 
 # 結果データ
 def resultDay():
-    startData = startDay(2022, 6, 8)
+    startData = startDate(startYear, startMonth, startDay)
     print(startData)
-    comparisonData =  comparisonDay(2029, 9, 2)
+    comparisonData =  comparisonDate(comparisonYear, comparisonMonth, comparisonDay)
     print(comparisonData)
     print("比較週:"+str(comparisonData[1]))
     week = int(comparisonData[1])-int(startData[2])
@@ -85,8 +101,8 @@ def resultDay():
 test2 = resultDay()
 print(test2)
 
-str = input()
-print(str)
+# str = input()
+# print(str)
 
 # def test(a, b):
 #     c = "yes"
